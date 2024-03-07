@@ -39,7 +39,7 @@ import {
 export function useObj(tableRef: Ref, treeRef: Ref) {
   const form = reactive({
     name: "",
-    status: ""
+    status: "1"
   });
   const formRef = ref();
   const ruleFormRef = ref();

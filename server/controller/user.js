@@ -32,7 +32,7 @@ const getList = async () => {
 }
 const getDBList = async (params) => {
   const sql = `
-        select id, department, username, realname, roles from users where roles='admin' AND username!='admin' AND department != ''
+        select id, department, username, realname, roles from users where roles='admin' AND username!='admin' AND (department = '' or department = null)
     `
   const rows = await exec(sql)
   return rows
