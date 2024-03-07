@@ -1,0 +1,14 @@
+2023/12/07 17:47:49 [error] 17372#15640: *1 directory index of "F:\nginx-1.24.0/html/" is forbidden, client: 127.0.0.1, server: localhost, request: "GET / HTTP/1.1", host: "localhost:8082"
+2023/12/07 17:47:50 [error] 17372#15640: *1 directory index of "F:\nginx-1.24.0/html/" is forbidden, client: 127.0.0.1, server: localhost, request: "GET / HTTP/1.1", host: "localhost:8082"
+2023/12/07 17:47:51 [error] 17372#15640: *1 directory index of "F:\nginx-1.24.0/html/" is forbidden, client: 127.0.0.1, server: localhost, request: "GET / HTTP/1.1", host: "localhost:8082"
+2023/12/07 17:47:52 [error] 17372#15640: *1 directory index of "F:\nginx-1.24.0/html/" is forbidden, client: 127.0.0.1, server: localhost, request: "GET / HTTP/1.1", host: "localhost:8082"
+2023/12/07 17:47:53 [error] 17372#15640: *1 directory index of "F:\nginx-1.24.0/html/" is forbidden, client: 127.0.0.1, server: localhost, request: "GET / HTTP/1.1", host: "localhost:8082"
+2023/12/07 17:48:03 [error] 17372#15640: *1 directory index of "F:\nginx-1.24.0/html/" is forbidden, client: 127.0.0.1, server: localhost, request: "GET / HTTP/1.1", host: "localhost:8082"
+2024/03/02 15:37:57 [error] 15096#1160: *3 CreateFile() "C:\Users\hp\Desktop\bysj\nginx-1.24.0/htmlhtml/index.html" failed (3: The system cannot find the path specified), client: 127.0.0.1, server: localhost, request: "GET /api/user/login HTTP/1.1", host: "localhost:8080"
+2024/03/02 15:38:06 [error] 15096#1160: *3 CreateFile() "C:\Users\hp\Desktop\bysj\nginx-1.24.0/htmlhtml/index.html" failed (3: The system cannot find the path specified), client: 127.0.0.1, server: localhost, request: "GET /api/user/login HTTP/1.1", host: "localhost:8080"
+2024/03/02 15:40:14 [error] 15096#1160: *23 CreateFile() "C:\Users\hp\Desktop\bysj\nginx-1.24.0/htmlhtml/index.html" failed (3: The system cannot find the path specified), client: 127.0.0.1, server: localhost, request: "GET /api/user/login HTTP/1.1", host: "localhost:8080"
+2024/03/02 15:40:53 [error] 15096#1160: *26 CreateFile() "C:\Users\hp\Desktop\bysj\nginx-1.24.0/htmlhtml/index.html" failed (3: The system cannot find the path specified), client: 127.0.0.1, server: localhost, request: "GET /api/userManage/list?total=0&pageSize=10&currentPage=1&background=true&name=&status= HTTP/1.1", host: "localhost:8080"
+2024/03/02 15:41:15 [emerg] 15684#11692: duplicate location "/" in C:\Users\hp\Desktop\bysj\nginx-1.24.0/conf/nginx.conf:43
+2024/03/02 15:41:15 [alert] 11340#6960: worker process 15684 exited with code 1
+2024/03/02 15:41:15 [alert] 11340#6960: could not respawn worker
+2024/03/02 15:41:29 [emerg] 15756#15272: duplicate location "/" in C:\Users\hp\Desktop\bysj\nginx-1.24.0/conf/nginx.conf:43

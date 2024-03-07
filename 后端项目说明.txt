@@ -1,0 +1,6 @@
+后端环境搭建以及启动
+
+1 所需环境nodejs 建议与前端node环境同步
+2 需建立mySever数据库，并且执行运行mySever.sql文件（在文件夹中）
+3 server文件夹下执行npm install
+3 server文件夹下执行npm run dev

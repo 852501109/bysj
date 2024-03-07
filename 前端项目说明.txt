@@ -1,0 +1,10 @@
+前端使用框架为：vue-pure-admin
+
+环境搭建以及启动：
+pnpm 版本 >=8.6.10
+
+1 安装node环境 （node 版本 ^18.18.0 || ^20.9.0 || >=21.1.0）
+2 web文件夹下执行 npm install -g pnpm
+3 在管理员权限中进入web文件夹下 执行 pnpm install
+4 web文件夹下 pnpm run serve 即打开本地环境 localhost:8848, 待启动后端即可使用
+

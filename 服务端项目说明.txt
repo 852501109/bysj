@@ -1,0 +1,5 @@
+服务端环境目的：模拟服务端环境产出
+1 web下执行 pnpm run build
+2 dist文件夹下文件夹及文件拷贝到nginx-1.24.0/html下
+3 执行nginx.exe
+4 打开localhost:8080 即打包后环境
