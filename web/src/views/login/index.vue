@@ -176,7 +176,7 @@ watch(loginDay, value => {
             <h2 class="outline-none">
               <TypeIt
                 :options="{
-                  strings: [title + '管理端'],
+                  strings: [title+'（管理端）'],
                   cursor: false,
                   speed: 100
                 }"

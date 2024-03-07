@@ -45,9 +45,9 @@
 .login-form h2 {
   text-transform: uppercase;
   margin: 15px 0;
-  color: #999;
+  color: #222;
   font:
-    bold 200% Consolas,
+    bold 137% Consolas,
     Monaco,
     monospace;
 }

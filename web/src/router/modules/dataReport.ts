@@ -2,7 +2,7 @@ export default {
   path: "/dataReport",
   redirect: "/dataReport/list/index",
   meta: {
-    icon: "ri:table-line",
+    icon: "ri:bank-card-line",
     title: "数据上报",
     rank: 5
   },

@@ -2,7 +2,7 @@ export default {
   path: "/account",
   redirect: "/account/index",
   meta: {
-    icon: "ri:table-line",
+    icon: "ep:set-up",
     title: "账号管理",
     rank: 2
   },

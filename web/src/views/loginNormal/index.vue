@@ -124,6 +124,7 @@ watch(loginDay, value => {
   <div class="select-none">
     <img :src="bg" class="wave" />
     <div class="flex-c absolute right-5 top-3">
+
       <!-- 主题 -->
       <el-switch
         v-model="dataTheme"
@@ -176,7 +177,7 @@ watch(loginDay, value => {
             <h2 class="outline-none">
               <TypeIt
                 :options="{
-                  strings: [title + '用户端'],
+                  strings: [title+'（用户端）'],
                   cursor: false,
                   speed: 100
                 }"

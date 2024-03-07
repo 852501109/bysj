@@ -9,6 +9,7 @@ import ticket from "@iconify-icons/ep/shop";
 import finance from "@iconify-icons/ep/platform";
 import marketing from "@iconify-icons/ep/goods";
 import date from "@iconify-icons/ep/odometer";
+import dayjs from "dayjs";
 import {
   getDBUserList,
 } from "@/api/user";
@@ -216,6 +217,9 @@ defineOptions({
                     <el-table-column
                       prop="createTime"
                       label="公告创建时间">
+                      <template #default="scope">
+                        <div>{{ dayjs(scope.row.createTime).format("YYYY-MM-DD HH:mm:ss") }}</div>
+                      </template>
                     </el-table-column>
                   </el-table>
                 </el-tab-pane>
@@ -333,5 +337,6 @@ defineOptions({
 .user {
   width: 100%;
   text-align: left;
+  padding: 0 0 0 18px;
 }
 </style>

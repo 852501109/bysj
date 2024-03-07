@@ -2,7 +2,7 @@ export default {
   path: "/accessManagement",
   redirect: "/userManage/index",
   meta: {
-    icon: "ri:table-line",
+    icon: "ri:bookmark-2-line",
     title: "外来人员出入管理",
     rank: 4
   },
