@@ -10,7 +10,7 @@ const redisStore = require('koa-redis')
 const path = require('path')
 const fs = require('fs')
 const morgan = require('koa-morgan')
-
+const auth = require('./utils/auth')
 const index = require('./routes/index')
 const users = require('./routes/users')
 const blog = require('./routes/blog')
@@ -32,6 +32,7 @@ onerror(app)
 app.use(bodyparser({
   enableTypes: ['json', 'form', 'text']
 }))
+app.use(auth)
 app.use(json())
 app.use(logger())
 app.use(require('koa-static')(__dirname + '/public'))

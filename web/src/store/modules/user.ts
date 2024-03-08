@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { message } from "@/utils/message";
 import { store } from "@/store";
 import type { userType } from "./types";
 import { routerArrays } from "@/layout/types";
@@ -112,12 +113,16 @@ export const useUserStore = defineStore({
       return new Promise<RefreshTokenResult>((resolve, reject) => {
         refreshTokenApi(data)
           .then(data => {
-            if (data) {
+            if (data.data && data.data.code === 4006) {
+              this.logOut()
+              message(data.data.msg , {type: "error"});
+            } else{
               setToken(data.data);
               resolve(data);
             }
           })
           .catch(error => {
+
             reject(error);
           });
       });

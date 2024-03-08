@@ -2,7 +2,8 @@ const router = require('koa-router')()
 const { login, register, repeatName, getList, getTotal, updateUserList, getDBList } = require('../controller/user')
 const jwt = require('jsonwebtoken')
 const { SuccessModel, ErrorModel } = require('../model/resModel')
-
+const { getAccesstoken, getRefershtoken, secret } = require('../utils/token')
+const sillyDateTime = require("silly-datetime");
 router.prefix('/api/user')
 
 router.get('/userList', async function (ctx, next) {
@@ -21,6 +22,7 @@ router.get('/DBList', async function (ctx, next) {
   }
   ctx.body = new SuccessModel(data)
 })
+
 router.post('/update', async function (ctx, next) {
   const val = await updateUserList(ctx.request.body)
   if (val) {
@@ -34,11 +36,11 @@ router.post('/login', async function (ctx, next) {
   const data = await login(username, password, type)
   if (data.username) {
     const user = data
-    const token = jwt.sign({ user }, 'bysj', { expiresIn: 10 })
 
-    // 一个用户可能有多个角色
-    user.accessToken = 'eyJhbGciOiJIUzUxMiJ9.admin'
-    user.refreshToken = 'eyJhbGciOiJIUzUxMiJ9.adminRefresh'
+    user.accessToken = getAccesstoken()
+    user.refreshToken = getRefershtoken()
+    // user.accessToken = 'eyJhbGciOiJIUzUxMiJ9.admin'
+    // user.refreshToken = 'eyJhbGciOiJIUzUxMiJ9.adminRefresh'
     user.expires = "2030/10/30 00:00:00"
     ctx.body = new SuccessModel(user, '登录成功')
 
@@ -61,16 +63,29 @@ router.post('/register', async function (ctx, next) {
   }
   ctx.body = new ErrorModel('注册失败')
 })
-// router.get('/session-test', async function (ctx, next) {
-//   if (ctx.session.viewCount == null) {
-//     ctx.session.viewCount = 0
-//   }
-//   ctx.session.viewCount++
-
-//   ctx.body ={
-//     errno: 0,
-//     viewCount: ctx.session.viewCount
-//   }
-// })
+router.post('/refresh', async (ctx) => {
+  let data = null
+  //获取请求头中携带的长token
+  console.log('ctx.request.body.refreshToken', ctx.request.body)
+  let r_tk = ctx.request.body.refreshToken
+  //解析token 参数 token 密钥 回调函数返回信息
+  const loginTime = sillyDateTime.format(new Date(), "YYYY-MM-DD HH:mm:ss")
+  await jwt.verify(r_tk, secret, (error) => {
+    if (error) {
+      data = {
+        code: 4006,
+        msg: '登录时效过期，请重新登录'
+      }
+      ctx.body = new ErrorModel(data)
+    } else {
+      data = {
+        accessToken: getAccesstoken(),
+        refreshToken: getRefershtoken(),
+        loginTime: loginTime
+      }
+      ctx.body = new SuccessModel(data)
+    }
+  })
+})
 
 module.exports = router

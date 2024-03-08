@@ -44,10 +44,10 @@ export function getToken(): DataInfo<number> {
  */
 export function setToken(data: DataInfo<Date>) {
   let expires = 0;
-  const { accessToken, refreshToken, loginTime,department } = data;
+  const { accessToken, refreshToken, loginTime} = data;
   const { isRemembered, loginDay } = useUserStoreHook();
   expires = new Date(data.expires).getTime(); // 如果后端直接设置时间戳，将此处代码改为expires = data.expires，然后把上面的DataInfo<Date>改成DataInfo<number>即可
-  const cookieString = JSON.stringify({ accessToken, expires });
+  const cookieString = JSON.stringify({ accessToken, expires, refreshToken });
 
   expires > 0
     ? Cookies.set(TokenKey, cookieString, {
@@ -71,7 +71,6 @@ export function setToken(data: DataInfo<Date>) {
     useUserStoreHook().SET_LOGINTIME(loginTime);
     useUserStoreHook().SET_DEPARTMENT(department);
     storageLocal().setItem(userKey, {
-      refreshToken,
       expires,
       username,
       roles,
@@ -101,5 +100,5 @@ export function removeToken() {
 
 /** 格式化token（jwt格式） */
 export const formatToken = (token: string): string => {
-  return "Bearer " + token;
+  return token;
 };
