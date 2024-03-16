@@ -6,10 +6,6 @@ const getList = async (param) => {
   let name = param.name ? `name='${decodeURI(param.name)}'` : true
   let status = param.status ? `status=${param.status}` : true
   let sql = `select * from notificationList where ${name} AND ${status} LIMIT ${(param.currentPage - 1) * param.pageSize}, ${param.pageSize}`
-  // if (keyword) {
-  //   sql += `and title like '%${keyword}%' `
-  // }
-  // sql += `order by createtime desc;`
 
   return await exec(sql)
 }
@@ -73,7 +69,7 @@ const updateNotifistatus = async (notifiData) => {
   return false
 }
 const delNotifiData = async (id) => {
-  // id 就是要删除博客的 id
+  // id 就是要删除的 id
   const sql = `delete from notificationlist where id=${id};`
   console.log('执行sql', sql)
   const delData = await exec(sql)

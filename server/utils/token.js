@@ -10,9 +10,7 @@ expiresIn：单位是已秒为单位
 
 // 生成短token
 const getAccesstoken = () => {
-
   return jwt.sign({ name: "Whilt" }, secret, { expiresIn: '5h' }) // 短token 过期时间
-
 }
 // 生成长token
 const getRefershtoken = () => {

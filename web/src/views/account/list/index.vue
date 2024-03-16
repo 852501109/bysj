@@ -136,22 +136,6 @@ const {
               >
                 账号部门授权
               </el-button>
-              <!-- <el-popconfirm
-                :title="`是否确认删除姓名为${row.name}的这条数据`"
-                @confirm="handleDelete(row)"
-              >
-                <template #reference>
-                  <el-button
-                    class="reset-margin"
-                    link
-                    type="primary"
-                    :size="size"
-                    :icon="useRenderIcon(Delete)"
-                  >
-                    删除
-                  </el-button>
-                </template>
-              </el-popconfirm> -->
             </template>
           </pure-table>
         </template>

@@ -46,7 +46,6 @@ const updateDangerIdentify = async (dangerIdentifyManage) => {
 
 const delDangerIdentify = async (id) => {
   const sql = `delete from dangerIdentifylist where id=${id};`
-  console.log('执行sql', sql)
   const delData = await exec(sql)
   if (delData.affectedRows > 0) {
     return true

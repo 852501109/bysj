@@ -3,7 +3,7 @@ const { secret } = require('./token')
 const jwt = require('jsonwebtoken')
 
 // 白名单
-const whiteList = ['/api/user/login', '/api/user/refresh']
+const whiteList = ['/api/user/login', '/api/user/refresh', '/api/user/register']
 
 // 函数中间件
 const auth = async (ctx, next) => {

@@ -44,7 +44,6 @@ const updateEmergencyRescuePlan = async (emergencyRescuePlanManage) => {
 
 const delEmergencyRescuePlan = async (id) => {
   const sql = `delete from emergencyRescuePlanlist where id=${id};`
-  console.log('执行sql', sql)
   const delData = await exec(sql)
   if (delData.affectedRows > 0) {
     return true
