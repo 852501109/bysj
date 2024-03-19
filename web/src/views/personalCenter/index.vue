@@ -60,7 +60,7 @@ onMounted(() => {
       fixed: "true",
       vertical: "center",
       horizontal: "left",
-      city: "CN101120205",
+      city: "CN101120206",
       key: "f7c514b6716d4d8c8e769651d517adbf"
     }
   };
