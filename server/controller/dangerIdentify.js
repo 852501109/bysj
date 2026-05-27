@@ -1,56 +1,71 @@
 const xss = require('xss')
 const { exec } = require('../db/mysql')
-const sillyDateTime = require("silly-datetime");
+const sillyDateTime = require("silly-datetime")
+
 const getList = async (param) => {
+  let conditions = []
+  let params = []
 
-  let name = param.name ? `name='${decodeURI(param.name)}'` : true
-  let sql = `select * from dangerIdentifylist where ${name} LIMIT ${(param.currentPage - 1) * param.pageSize}, ${param.pageSize}`
-  return await exec(sql)
+  if (param.name) {
+    conditions.push('name = ?')
+    params.push(decodeURI(param.name))
+  }
+
+  let where = conditions.length ? `where ${conditions.join(' AND ')}` : ''
+  let pageSize = Number(param.pageSize) || 10
+  let currentPage = Number(param.currentPage) || 1
+  let offset = (currentPage - 1) * pageSize
+
+  let sql = `select * from dangerIdentifylist ${where} LIMIT ?, ?`
+  params.push(offset, pageSize)
+
+  return await exec(sql, params)
 }
+
 const getTotal = async (param) => {
-  let name = param.name ? `name='${decodeURI(param.name)}'` : true
-  let sql = `SELECT COUNT(*) AS total_count FROM dangerIdentifylist where ${name};`
+  let conditions = []
+  let params = []
 
-  return await exec(sql)
+  if (param.name) {
+    conditions.push('name = ?')
+    params.push(decodeURI(param.name))
+  }
+
+  let where = conditions.length ? `where ${conditions.join(' AND ')}` : ''
+  let sql = `SELECT COUNT(*) AS total_count FROM dangerIdentifylist ${where}`
+
+  return await exec(sql, params)
 }
-
 
 const repeatName = async (dangerIdentifyManage = {}) => {
-  const searchNameSql = `select * from dangerIdentifylist where name='${dangerIdentifyManage.name}'`
-  const list = await exec(searchNameSql)
-  return list
+  const sql = `select * from dangerIdentifylist where name=?`
+  return await exec(sql, [dangerIdentifyManage.name])
 }
-const newDangerIdentify = async (dangerIdentifyManage = {}) => {
 
+const newDangerIdentify = async (dangerIdentifyManage = {}) => {
   const name = xss(dangerIdentifyManage.name)
   const detail = xss(dangerIdentifyManage.detail)
   const createTime = sillyDateTime.format(new Date(), "YYYY-MM-DD HH:mm:ss")
-  const sql = `insert into dangerIdentifylist (name, detail,createTime) values ('${name}', '${detail}', '${createTime}');`
-  const insertData = await exec(sql)
-  return {
-    id: insertData.insertId
-  }
+
+  const sql = `insert into dangerIdentifylist (name, detail, createTime) values (?, ?, ?)`
+  const insertData = await exec(sql, [name, detail, createTime])
+  return { id: insertData.insertId }
 }
 
 const updateDangerIdentify = async (dangerIdentifyManage) => {
   const name = xss(dangerIdentifyManage.name)
   const detail = xss(dangerIdentifyManage.detail)
   const id = dangerIdentifyManage.id
-  const sql = `update dangerIdentifylist set name='${name}', detail='${detail}' where id=${id}`
-  const updateData = await exec(sql)
-  if (updateData.affectedRows > 0) {
-    return true
-  }
-  return false
+
+  const sql = `update dangerIdentifylist set name=?, detail=? where id=?`
+  const updateData = await exec(sql, [name, detail, id])
+  return updateData.affectedRows > 0
 }
 
 const delDangerIdentify = async (id) => {
-  const sql = `delete from dangerIdentifylist where id=${id};`
-  const delData = await exec(sql)
-  if (delData.affectedRows > 0) {
-    return true
-  }
-  return false
+  const sql = `delete from dangerIdentifylist where id=?`
+  const delData = await exec(sql, [id])
+  return delData.affectedRows > 0
 }
 
 module.exports = {

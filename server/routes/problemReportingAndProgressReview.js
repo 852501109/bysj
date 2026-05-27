@@ -9,7 +9,7 @@ const {
   getDBList
 } = require('../controller/problemReportingAndProgressReview')
 const { SuccessModel, ErrorModel } = require('../model/resModel')
-// const loginCheck = require('../middleware/loginCheck')
+const { validatePage, validateId, validateRequired } = require('../utils/validate')
 
 router.prefix('/api/problemReportingAndProgressReview')
 router.get('/DBList', async function (ctx, next) {
@@ -20,6 +20,8 @@ router.get('/DBList', async function (ctx, next) {
   ctx.body = new SuccessModel(data)
 })
 router.get('/list', async function (ctx, next) {
+  const err = validatePage(ctx.query)
+  if (err) { ctx.body = new ErrorModel(err); return }
   const listData = await getList(ctx.query)
   const total = await getTotal(ctx.query)
   const data = {
@@ -30,12 +32,16 @@ router.get('/list', async function (ctx, next) {
 })
 
 router.get('/detail', async function (ctx, next) {
+  const err = validateId(ctx.query.id)
+  if (err) { ctx.body = new ErrorModel(err); return }
   const data = await getDetail(ctx.query.id)
   ctx.body = new SuccessModel(data)
 })
 
 router.post('/add', async function (ctx, next) {
   const body = ctx.request.body
+  const err = validateRequired(body, ['name', 'content'])
+  if (err) { ctx.body = new ErrorModel(err); return }
   const repeat = await repeatName(body)
   if (repeat.length > 0) {
     ctx.body = new ErrorModel('名称已存在')
@@ -49,6 +55,8 @@ router.post('/add', async function (ctx, next) {
 
 router.post('/update', async function (ctx, next) {
   const body = ctx.request.body
+  const err = validateId(body.id) || validateRequired(body, ['name', 'content'])
+  if (err) { ctx.body = new ErrorModel(err); return }
   const repeat = await repeatName(body)
   if (repeat.length > 0 && repeat[0].id !== body.id) {
     ctx.body = new ErrorModel('名称不可与其他名称重复')
@@ -64,7 +72,8 @@ router.post('/update', async function (ctx, next) {
 })
 
 router.post('/del', async function (ctx, next) {
-  console.log('ctx.body', ctx.request.body)
+  const err = validateId(ctx.request.body.id)
+  if (err) { ctx.body = new ErrorModel(err); return }
   const val = await delProblemReportingAndProgressReview(ctx.request.body.id)
   if (val) {
     ctx.body = new SuccessModel()

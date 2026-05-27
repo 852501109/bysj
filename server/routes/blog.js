@@ -8,6 +8,7 @@ const {
 } = require('../controller/blog')
 const { SuccessModel, ErrorModel } = require('../model/resModel')
 const loginCheck = require('../middleware/loginCheck')
+const { validateId, validateRequired } = require('../utils/validate')
 
 router.prefix('/api/blog')
 
@@ -33,18 +34,24 @@ router.get('/list', async function (ctx, next) {
 })
 
 router.get('/detail', async function (ctx, next) {
+    const err = validateId(ctx.query.id)
+    if (err) { ctx.body = new ErrorModel(err); return }
     const data = await getDetail(ctx.query.id)
     ctx.body = new SuccessModel(data)
 })
 
 router.post('/new', loginCheck, async function (ctx, next) {
   const body = ctx.request.body
+  const err = validateRequired(body, ['title', 'content'])
+  if (err) { ctx.body = new ErrorModel(err); return }
   body.author = ctx.session.username
   const data = await newBlog(body)
   ctx.body = new SuccessModel(data)
 })
 
 router.post('/update', loginCheck, async function (ctx, next) {
+    const err = validateId(ctx.query.id) || validateRequired(ctx.request.body, ['title', 'content'])
+    if (err) { ctx.body = new ErrorModel(err); return }
     const val = await updateBlog(ctx.query.id, ctx.request.body)
     if (val) {
         ctx.body = new SuccessModel()
@@ -54,6 +61,8 @@ router.post('/update', loginCheck, async function (ctx, next) {
 })
 
 router.post('/del', loginCheck, async function (ctx, next) {
+  const err = validateId(ctx.query.id)
+  if (err) { ctx.body = new ErrorModel(err); return }
   const author = ctx.session.username
   const val = await delBlog(ctx.query.id, author)
   if (val) {

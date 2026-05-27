@@ -8,11 +8,13 @@ const {
   repeatName,
 } = require('../controller/emergencyRescuePlan')
 const { SuccessModel, ErrorModel } = require('../model/resModel')
-// const loginCheck = require('../middleware/loginCheck')
+const { validatePage, validateId, validateRequired } = require('../utils/validate')
 
 router.prefix('/api/emergencyRescuePlan')
 
 router.get('/list', async function (ctx, next) {
+  const err = validatePage(ctx.query)
+  if (err) { ctx.body = new ErrorModel(err); return }
   const listData = await getList(ctx.query)
   const total = await getTotal(ctx.query)
   const data = {
@@ -23,12 +25,16 @@ router.get('/list', async function (ctx, next) {
 })
 
 router.get('/detail', async function (ctx, next) {
+  const err = validateId(ctx.query.id)
+  if (err) { ctx.body = new ErrorModel(err); return }
   const data = await getDetail(ctx.query.id)
   ctx.body = new SuccessModel(data)
 })
 
 router.post('/add', async function (ctx, next) {
   const body = ctx.request.body
+  const err = validateRequired(body, ['type'])
+  if (err) { ctx.body = new ErrorModel(err); return }
   const data = await newEmergencyRescuePlan(body)
   ctx.body = new SuccessModel(data)
 })
@@ -36,6 +42,8 @@ router.post('/add', async function (ctx, next) {
 
 router.post('/update', async function (ctx, next) {
   const body = ctx.request.body
+  const err = validateId(body.id) || validateRequired(body, ['type'])
+  if (err) { ctx.body = new ErrorModel(err); return }
   const val = await updateEmergencyRescuePlan(ctx.request.body)
   if (val) {
     ctx.body = new SuccessModel(val, '编辑成功')
@@ -46,7 +54,8 @@ router.post('/update', async function (ctx, next) {
 })
 
 router.post('/del', async function (ctx, next) {
-  console.log('ctx.body', ctx.request.body)
+  const err = validateId(ctx.request.body.id)
+  if (err) { ctx.body = new ErrorModel(err); return }
   const val = await delEmergencyRescuePlan(ctx.request.body.id)
   if (val) {
     ctx.body = new SuccessModel()

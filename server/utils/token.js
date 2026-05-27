@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 // 密钥
-const secret = '2204A_lzr_/wp_2023'
+const secret = process.env.JWT_SECRET || '2204A_lzr_/wp_2023'
 
 /*
 expiresIn：单位是已秒为单位

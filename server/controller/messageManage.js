@@ -1,58 +1,77 @@
 const xss = require('xss')
 const { exec } = require('../db/mysql')
-const sillyDateTime = require("silly-datetime");
+const sillyDateTime = require("silly-datetime")
+
 const getList = async (param) => {
+  let conditions = []
+  let params = []
 
-  let name = param.name ? `name='${decodeURI(param.name)}'` : true
-  let sql
-  if (param.department === 'admin') {
-    sql = `select * from messagelist where ${name}  LIMIT ${(param.currentPage - 1) * param.pageSize}, ${param.pageSize}`
-  } else if (param.department !== '' && !param.department !== 'admin') {
-    sql = `select * from messagelist where ${name} AND department=${param.department} LIMIT ${(param.currentPage - 1) * param.pageSize}, ${param.pageSize}`
-  } else {
-    sql = `select * from messagelist  where false`
+  if (param.name) {
+    conditions.push('name = ?')
+    params.push(decodeURI(param.name))
   }
 
-  // if (keyword) {
-  //   sql += `and title like '%${keyword}%' `
-  // }
-  // sql += `order by createtime desc;`
+  let where
+  if (param.department === 'admin') {
+    where = conditions.length ? `where ${conditions.join(' AND ')}` : ''
+  } else if (param.department) {
+    conditions.push('department = ?')
+    params.push(param.department)
+    where = `where ${conditions.join(' AND ')}`
+  } else {
+    where = 'where false'
+  }
 
-  return await exec(sql)
+  let pageSize = Number(param.pageSize) || 10
+  let currentPage = Number(param.currentPage) || 1
+  let offset = (currentPage - 1) * pageSize
+
+  let sql = `select * from messagelist ${where} LIMIT ?, ?`
+  params.push(offset, pageSize)
+
+  return await exec(sql, params)
 }
+
 const getTotal = async (param) => {
-  let name = param.name ? `name='${decodeURI(param.name)}'` : true
-  let sql
-  if (param.department === 'admin') {
-    sql = `SELECT COUNT(*) AS total_count FROM messagelist where ${name}`
-  } else if (param.department !== '' && !param.department !== 'admin') {
-    sql = `SELECT COUNT(*) AS total_count FROM messagelist where ${name} AND department=${param.department}`
-  } else {
-    sql = `SELECT COUNT(*) AS total_count FROM messagelist  where false`
-  }
-  console.log('1111sql', sql)
-  return await exec(sql)
-}
+  let conditions = []
+  let params = []
 
+  if (param.name) {
+    conditions.push('name = ?')
+    params.push(decodeURI(param.name))
+  }
+
+  let where
+  if (param.department === 'admin') {
+    where = conditions.length ? `where ${conditions.join(' AND ')}` : ''
+  } else if (param.department) {
+    conditions.push('department = ?')
+    params.push(param.department)
+    where = `where ${conditions.join(' AND ')}`
+  } else {
+    where = 'where false'
+  }
+
+  let sql = `SELECT COUNT(*) AS total_count FROM messagelist ${where}`
+  return await exec(sql, params)
+}
 
 const repeatName = async (messageManage = {}) => {
-  const searchNameSql = `select * from messagelist where name='${messageManage.name}'`
-  const list = await exec(searchNameSql)
-  return list
+  const sql = `select * from messagelist where name=?`
+  return await exec(sql, [messageManage.name])
 }
-const newMessageManage = async (messageManage = {}) => {
 
+const newMessageManage = async (messageManage = {}) => {
   const name = xss(messageManage.name)
   const phone = xss(messageManage.phone)
   const position = xss(messageManage.position)
   const address = xss(messageManage.address)
   const sex = xss(messageManage.sex)
   const createTime = sillyDateTime.format(new Date(), "YYYY-MM-DD HH:mm:ss")
-  const sql = `insert into messagelist (name, phone, position, address, sex, createTime) values ('${name}', '${phone}', '${position}', ${address}, '${sex}', '${createTime}');`
-  const insertData = await exec(sql)
-  return {
-    id: insertData.insertId
-  }
+
+  const sql = `insert into messagelist (name, phone, position, address, sex, createTime) values (?, ?, ?, ?, ?, ?)`
+  const insertData = await exec(sql, [name, phone, position, address, sex, createTime])
+  return { id: insertData.insertId }
 }
 
 const updateMessageManage = async (messageManage) => {
@@ -62,21 +81,16 @@ const updateMessageManage = async (messageManage) => {
   const address = xss(messageManage.address)
   const sex = xss(messageManage.sex)
   const id = messageManage.id
-  const sql = `update messagelist set name='${name}', position='${position}', phone='${phone}', sex='${sex}', address='${address}' where id=${id}`
-  const updateData = await exec(sql)
-  if (updateData.affectedRows > 0) {
-    return true
-  }
-  return false
+
+  const sql = `update messagelist set name=?, position=?, phone=?, sex=?, address=? where id=?`
+  const updateData = await exec(sql, [name, position, phone, sex, address, id])
+  return updateData.affectedRows > 0
 }
 
 const delMessageManage = async (id) => {
-  const sql = `delete from messagelist where id=${id};`
-  const delData = await exec(sql)
-  if (delData.affectedRows > 0) {
-    return true
-  }
-  return false
+  const sql = `delete from messagelist where id=?`
+  const delData = await exec(sql, [id])
+  return delData.affectedRows > 0
 }
 
 module.exports = {

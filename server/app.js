@@ -65,7 +65,7 @@ if (ENV !== 'production') {
 }
 
 // session 配置
-app.keys = ['WJiol#23123_']
+app.keys = [process.env.SESSION_KEYS || 'WJiol#23123_']
 app.use(session({
   // 配置 cookie
   cookie: {

@@ -3,6 +3,7 @@ const { login, register, repeatName, getList, getTotal, updateUserList, getDBLis
 const jwt = require('jsonwebtoken')
 const { SuccessModel, ErrorModel } = require('../model/resModel')
 const { getAccesstoken, getRefershtoken, secret } = require('../utils/token')
+const { validateId, validateRequired } = require('../utils/validate')
 const sillyDateTime = require("silly-datetime");
 router.prefix('/api/user')
 
@@ -24,6 +25,8 @@ router.get('/DBList', async function (ctx, next) {
 })
 
 router.post('/update', async function (ctx, next) {
+  const err = validateId(ctx.request.body.id)
+  if (err) { ctx.body = new ErrorModel(err); return }
   const val = await updateUserList(ctx.request.body)
   if (val) {
     ctx.body = new SuccessModel(val, '编辑成功')
@@ -33,6 +36,8 @@ router.post('/update', async function (ctx, next) {
 })
 router.post('/login', async function (ctx, next) {
   const { username, password, type } = ctx.request.body
+  const err = validateRequired(ctx.request.body, ['username', 'password'])
+  if (err) { ctx.body = new ErrorModel(err); return }
   const data = await login(username, password, type)
   if (data.username) {
     const user = data
@@ -51,6 +56,8 @@ router.post('/login', async function (ctx, next) {
 
 router.post('/register', async function (ctx, next) {
   const { username, password, roles } = ctx.request.body
+  const err = validateRequired(ctx.request.body, ['username', 'password', 'roles'])
+  if (err) { ctx.body = new ErrorModel(err); return }
   const repeat = await repeatName(username)
   if (repeat.length > 0) {
     ctx.body = new ErrorModel('账号名已存在，请重新注册')
@@ -65,8 +72,8 @@ router.post('/register', async function (ctx, next) {
 })
 router.post('/refresh', async (ctx) => {
   let data = null
-  //获取请求头中携带的长token
-  console.log('ctx.request.body.refreshToken', ctx.request.body)
+  const err = validateRequired(ctx.request.body, ['refreshToken'])
+  if (err) { ctx.body = new ErrorModel(err); return }
   let r_tk = ctx.request.body.refreshToken
   //解析token 参数 token 密钥 回调函数返回信息
   const loginTime = sillyDateTime.format(new Date(), "YYYY-MM-DD HH:mm:ss")

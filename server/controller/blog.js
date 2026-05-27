@@ -2,69 +2,53 @@ const xss = require('xss')
 const { exec } = require('../db/mysql')
 
 const getList = async (author, keyword) => {
-  let sql = `select * from blogs where 1=1 `
+  let sql = `select * from blogs where 1=1`
+  let params = []
   if (author) {
-    sql += `and author='${author}' `
+    sql += ` and author=?`
+    params.push(author)
   }
   if (keyword) {
-    sql += `and title like '%${keyword}%' `
+    sql += ` and title like ?`
+    params.push(`%${keyword}%`)
   }
-  sql += `order by createtime desc;`
+  sql += ` order by createtime desc`
 
-  return await exec(sql)
+  return await exec(sql, params)
 }
 
 const getDetail = async (id) => {
-  const sql = `select * from blogs where id='${id}'`
-  const rows = await exec(sql)
+  const sql = `select * from blogs where id=?`
+  const rows = await exec(sql, [id])
   return rows[0]
 }
 
 const newBlog = async (blogData = {}) => {
-  // blogData 是一个博客对象，包含 title content author 属性
   const title = xss(blogData.title)
-  // console.log('title is', title)
   const content = xss(blogData.content)
   const author = blogData.author
   const createTime = Date.now()
 
-  const sql = `
-        insert into blogs (title, content, createtime, author)
-        values ('${title}', '${content}', ${createTime}, '${author}');
-    `
-
-  const insertData = await exec(sql)
+  const sql = `insert into blogs (title, content, createtime, author) values (?, ?, ?, ?)`
+  const insertData = await exec(sql, [title, content, createTime, author])
   return {
     id: insertData.insertId
   }
 }
 
 const updateBlog = async (id, blogData = {}) => {
-  // id 就是要更新博客的 id
-  // blogData 是一个博客对象，包含 title content 属性
-
   const title = xss(blogData.title)
   const content = xss(blogData.content)
 
-  const sql = `
-        update blogs set title='${title}', content='${content}' where id=${id}
-    `
-
-  const updateData = await exec(sql)
-  if (updateData.affectedRows > 0) {
-    return true
-  }
-  return false
+  const sql = `update blogs set title=?, content=? where id=?`
+  const updateData = await exec(sql, [title, content, id])
+  return updateData.affectedRows > 0
 }
 
 const delBlog = async (id, author) => {
-  // id 就是要删除博客的 id
-  const sql = `delete from blogs where id='${id}' and author='${author}';`
-  const delData = await exec(sql)
-  if (delData.affectedRows > 0) {
-    return true
-  }
-  return false
+  const sql = `delete from blogs where id=? and author=?`
+  const delData = await exec(sql, [id, author])
+  return delData.affectedRows > 0
 }
 
 module.exports = {
