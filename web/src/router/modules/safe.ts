@@ -13,7 +13,7 @@ export default {
       component: () => import("@/views/safe/list/index.vue"),
       meta: {
         title: "安全培训",
-        roles: ["admin"]
+        roles: ["admin", "superAdmin"]
       }
     }
   ]

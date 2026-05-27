@@ -13,7 +13,7 @@ export default {
       component: () => import("@/views/messageManage/list/index.vue"),
       meta: {
         title: "配套设施安全",
-        roles: ["admin"]
+        roles: ["admin", "superAdmin"]
       }
     }
   ]

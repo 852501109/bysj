@@ -73,6 +73,12 @@ const updateSafe = async (safe) => {
   return updateData.affectedRows > 0
 }
 
+const getDetail = async (id) => {
+  const sql = `select * from safelist where id=?`
+  const rows = await exec(sql, [id])
+  return rows[0]
+}
+
 const delSafe = async (id) => {
   const sql = `delete from safelist where id=?`
   const delData = await exec(sql, [id])
@@ -83,6 +89,7 @@ module.exports = {
   getList,
   newSafe,
   updateSafe,
+  getDetail,
   delSafe,
   getTotal,
   repeatName

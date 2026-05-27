@@ -13,7 +13,7 @@ export default {
       component: () => import("@/views/accessManagement/list/index.vue"),
       meta: {
         title: "外来人员出入管理",
-        roles: ["admin"]
+        roles: ["admin", "superAdmin"]
       }
     }
   ]

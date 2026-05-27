@@ -13,7 +13,7 @@ export default {
       component: () => import("@/views/dangerIdentify/list/index.vue"),
       meta: {
         title: "危险源辨识",
-        roles: ["admin"]
+        roles: ["admin", "superAdmin"]
       }
     },
 

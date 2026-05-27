@@ -13,7 +13,7 @@ export default {
       component: () => import("@/views/personalCenter/index.vue"),
       meta: {
         title: "个人中心",
-        roles: ["admin"]
+        roles: ["admin", "superAdmin"]
       }
     }
   ]

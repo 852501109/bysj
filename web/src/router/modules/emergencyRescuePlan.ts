@@ -13,7 +13,7 @@ export default {
       component: () => import("@/views/emergencyRescuePlan/list/index.vue"),
       meta: {
         title: "应急救援预案",
-        roles: ["admin"]
+        roles: ["admin", "superAdmin"]
       }
     }
   ]

@@ -60,6 +60,12 @@ const updateEmergencyRescuePlan = async (emergencyRescuePlanManage) => {
   return updateData.affectedRows > 0
 }
 
+const getDetail = async (id) => {
+  const sql = `select * from emergencyRescuePlanlist where id=?`
+  const rows = await exec(sql, [id])
+  return rows[0]
+}
+
 const delEmergencyRescuePlan = async (id) => {
   const sql = `delete from emergencyRescuePlanlist where id=?`
   const delData = await exec(sql, [id])
@@ -70,6 +76,7 @@ module.exports = {
   getList,
   newEmergencyRescuePlan,
   updateEmergencyRescuePlan,
+  getDetail,
   delEmergencyRescuePlan,
   getTotal,
   repeatName

@@ -10,6 +10,7 @@ const {
 } = require('../controller/problemReportingAndProgressReview')
 const { SuccessModel, ErrorModel } = require('../model/resModel')
 const { validatePage, validateId, validateRequired } = require('../utils/validate')
+const permission = require('../middleware/permission')
 
 router.prefix('/api/problemReportingAndProgressReview')
 router.get('/DBList', async function (ctx, next) {
@@ -38,7 +39,7 @@ router.get('/detail', async function (ctx, next) {
   ctx.body = new SuccessModel(data)
 })
 
-router.post('/add', async function (ctx, next) {
+router.post('/add', permission('problemReporting:create'), async function (ctx, next) {
   const body = ctx.request.body
   const err = validateRequired(body, ['name', 'content'])
   if (err) { ctx.body = new ErrorModel(err); return }
@@ -53,7 +54,7 @@ router.post('/add', async function (ctx, next) {
 })
 
 
-router.post('/update', async function (ctx, next) {
+router.post('/update', permission('problemReporting:update'), async function (ctx, next) {
   const body = ctx.request.body
   const err = validateId(body.id) || validateRequired(body, ['name', 'content'])
   if (err) { ctx.body = new ErrorModel(err); return }
@@ -71,7 +72,7 @@ router.post('/update', async function (ctx, next) {
 
 })
 
-router.post('/del', async function (ctx, next) {
+router.post('/del', permission('problemReporting:delete'), async function (ctx, next) {
   const err = validateId(ctx.request.body.id)
   if (err) { ctx.body = new ErrorModel(err); return }
   const val = await delProblemReportingAndProgressReview(ctx.request.body.id)

@@ -1,6 +1,7 @@
 const router = require('koa-router')()
 const {
   getList,
+  getDetail,
   newMessageManage,
   updateMessageManage,
   delMessageManage,
@@ -9,6 +10,7 @@ const {
 } = require('../controller/messageManage')
 const { SuccessModel, ErrorModel } = require('../model/resModel')
 const { validatePage, validateId, validateRequired } = require('../utils/validate')
+const permission = require('../middleware/permission')
 
 router.prefix('/api/messageManage')
 
@@ -31,7 +33,7 @@ router.get('/detail', async function (ctx, next) {
   ctx.body = new SuccessModel(data)
 })
 
-router.post('/add', async function (ctx, next) {
+router.post('/add', permission('messageManage:create'), async function (ctx, next) {
   const body = ctx.request.body
   const err = validateRequired(body, ['name'])
   if (err) { ctx.body = new ErrorModel(err); return }
@@ -46,7 +48,7 @@ router.post('/add', async function (ctx, next) {
 })
 
 
-router.post('/update', async function (ctx, next) {
+router.post('/update', permission('messageManage:update'), async function (ctx, next) {
   const body = ctx.request.body
   const err = validateId(body.id) || validateRequired(body, ['name'])
   if (err) { ctx.body = new ErrorModel(err); return }
@@ -64,7 +66,7 @@ router.post('/update', async function (ctx, next) {
 
 })
 
-router.post('/del', async function (ctx, next) {
+router.post('/del', permission('messageManage:delete'), async function (ctx, next) {
   const err = validateId(ctx.request.body.id)
   if (err) { ctx.body = new ErrorModel(err); return }
   const val = await delMessageManage(ctx.request.body.id)

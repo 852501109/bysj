@@ -62,6 +62,12 @@ const updateDangerIdentify = async (dangerIdentifyManage) => {
   return updateData.affectedRows > 0
 }
 
+const getDetail = async (id) => {
+  const sql = `select * from dangerIdentifylist where id=?`
+  const rows = await exec(sql, [id])
+  return rows[0]
+}
+
 const delDangerIdentify = async (id) => {
   const sql = `delete from dangerIdentifylist where id=?`
   const delData = await exec(sql, [id])
@@ -72,6 +78,7 @@ module.exports = {
   getList,
   newDangerIdentify,
   updateDangerIdentify,
+  getDetail,
   delDangerIdentify,
   getTotal,
   repeatName

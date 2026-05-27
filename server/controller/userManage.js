@@ -76,6 +76,12 @@ const updateUserManage = async (userManage) => {
   return updateData.affectedRows > 0
 }
 
+const getDetail = async (id) => {
+  const sql = `select * from userlist where id=?`
+  const rows = await exec(sql, [id])
+  return rows[0]
+}
+
 const delUserManage = async (id) => {
   const sql = `delete from userlist where id=?`
   const delData = await exec(sql, [id])
@@ -86,6 +92,7 @@ module.exports = {
   getList,
   newUserManage,
   updateUserManage,
+  getDetail,
   delUserManage,
   getTotal,
   repeatName

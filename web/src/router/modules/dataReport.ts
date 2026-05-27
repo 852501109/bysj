@@ -13,7 +13,7 @@ export default {
       component: () => import("@/views/dataReport/list/index.vue"),
       meta: {
         title: "数据上报",
-        roles: ["admin"]
+        roles: ["admin", "superAdmin"]
       }
     },
 

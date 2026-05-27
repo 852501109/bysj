@@ -13,7 +13,7 @@ export default {
       component: () => import("@/views/notificationNormal/list/index.vue"),
       meta: {
         title: "公告",
-        roles: ["normal"]
+        roles: ["admin", "superAdmin", "normal"]
       }
     },
 

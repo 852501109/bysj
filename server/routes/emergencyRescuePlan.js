@@ -1,6 +1,7 @@
 const router = require('koa-router')()
 const {
   getList,
+  getDetail,
   newEmergencyRescuePlan,
   updateEmergencyRescuePlan,
   delEmergencyRescuePlan,
@@ -9,6 +10,7 @@ const {
 } = require('../controller/emergencyRescuePlan')
 const { SuccessModel, ErrorModel } = require('../model/resModel')
 const { validatePage, validateId, validateRequired } = require('../utils/validate')
+const permission = require('../middleware/permission')
 
 router.prefix('/api/emergencyRescuePlan')
 
@@ -31,7 +33,7 @@ router.get('/detail', async function (ctx, next) {
   ctx.body = new SuccessModel(data)
 })
 
-router.post('/add', async function (ctx, next) {
+router.post('/add', permission('emergencyRescuePlan:create'), async function (ctx, next) {
   const body = ctx.request.body
   const err = validateRequired(body, ['type'])
   if (err) { ctx.body = new ErrorModel(err); return }
@@ -40,7 +42,7 @@ router.post('/add', async function (ctx, next) {
 })
 
 
-router.post('/update', async function (ctx, next) {
+router.post('/update', permission('emergencyRescuePlan:update'), async function (ctx, next) {
   const body = ctx.request.body
   const err = validateId(body.id) || validateRequired(body, ['type'])
   if (err) { ctx.body = new ErrorModel(err); return }
@@ -53,7 +55,7 @@ router.post('/update', async function (ctx, next) {
 
 })
 
-router.post('/del', async function (ctx, next) {
+router.post('/del', permission('emergencyRescuePlan:delete'), async function (ctx, next) {
   const err = validateId(ctx.request.body.id)
   if (err) { ctx.body = new ErrorModel(err); return }
   const val = await delEmergencyRescuePlan(ctx.request.body.id)

@@ -10,8 +10,8 @@ const {
   updateNotifistatus
 } = require('../controller/notification')
 const { SuccessModel, ErrorModel } = require('../model/resModel')
-const loginCheck = require('../middleware/loginCheck')
 const { validatePage, validateId, validateRequired } = require('../utils/validate')
+const permission = require('../middleware/permission')
 
 router.prefix('/api/notification')
 
@@ -34,7 +34,7 @@ router.get('/detail', async function (ctx, next) {
   ctx.body = new SuccessModel(data)
 })
 
-router.post('/add', async function (ctx, next) {
+router.post('/add', permission('notification:create'), async function (ctx, next) {
   const body = ctx.request.body
   const err = validateRequired(body, ['name', 'content'])
   if (err) { ctx.body = new ErrorModel(err); return }
@@ -48,7 +48,7 @@ router.post('/add', async function (ctx, next) {
 
 })
 
-router.post('/updateStatus', async function (ctx, next) {
+router.post('/updateStatus', permission('notification:update'), async function (ctx, next) {
   const err = validateId(ctx.request.body.id) || validateRequired(ctx.request.body, ['status'])
   if (err) { ctx.body = new ErrorModel(err); return }
   const val = await updateNotifistatus(ctx.request.body)
@@ -58,7 +58,7 @@ router.post('/updateStatus', async function (ctx, next) {
     ctx.body = new ErrorModel('更新状态失败')
   }
 })
-router.post('/update', async function (ctx, next) {
+router.post('/update', permission('notification:update'), async function (ctx, next) {
   const body = ctx.request.body
   const err = validateId(body.id) || validateRequired(body, ['name', 'content'])
   if (err) { ctx.body = new ErrorModel(err); return }
@@ -76,7 +76,7 @@ router.post('/update', async function (ctx, next) {
 
 })
 
-router.post('/del', async function (ctx, next) {
+router.post('/del', permission('notification:delete'), async function (ctx, next) {
   const err = validateId(ctx.request.body.id)
   if (err) { ctx.body = new ErrorModel(err); return }
   const val = await delNotifiData(ctx.request.body.id)

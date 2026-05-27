@@ -5,8 +5,6 @@ const json = require('koa-json')
 const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
-const session = require('koa-generic-session')
-const redisStore = require('koa-redis')
 const path = require('path')
 const fs = require('fs')
 const morgan = require('koa-morgan')
@@ -23,7 +21,8 @@ const accessManagement = require('./routes/accessManagement')
 const safe = require('./routes/safe')
 const emergencyRescuePlan = require('./routes/emergencyRescuePlan')
 const problemReportingAndProgressReview = require('./routes/problemReportingAndProgressReview')
-const { REDIS_CONF } = require('./conf/db')
+const role = require('./routes/role')
+const system = require('./routes/system')
 
 // error handler
 onerror(app)
@@ -51,34 +50,12 @@ app.use(async (ctx, next) => {
 
 const ENV = process.env.NODE_ENV
 if (ENV !== 'production') {
-  // 开发环境 / 测试环境
-  app.use(morgan('dev'));
+  app.use(morgan('dev'))
 } else {
-  // 线上环境
   const logFileName = path.join(__dirname, 'logs', 'access.log')
-  const writeStream = fs.createWriteStream(logFileName, {
-    flags: 'a'
-  })
-  app.use(morgan('combined', {
-    stream: writeStream
-  }));
+  const writeStream = fs.createWriteStream(logFileName, { flags: 'a' })
+  app.use(morgan('combined', { stream: writeStream }))
 }
-
-// session 配置
-app.keys = [process.env.SESSION_KEYS || 'WJiol#23123_']
-app.use(session({
-  // 配置 cookie
-  cookie: {
-    path: '/',
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000
-  },
-  // 配置 redis
-  store: redisStore({
-    // all: '127.0.0.1:6379'   // 写死本地的 redis
-    all: `${REDIS_CONF.host}:${REDIS_CONF.port}`
-  })
-}))
 
 // routes
 app.use(index.routes(), index.allowedMethods())
@@ -93,10 +70,12 @@ app.use(safe.routes(), safe.allowedMethods())
 app.use(emergencyRescuePlan.routes(), emergencyRescuePlan.allowedMethods())
 app.use(problemReportingAndProgressReview.routes(), problemReportingAndProgressReview.allowedMethods())
 app.use(accessManagement.routes(), accessManagement.allowedMethods())
+app.use(role.routes(), role.allowedMethods())
+app.use(system.routes(), system.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {
   console.error('server error', err, ctx)
-});
+})
 
 module.exports = app

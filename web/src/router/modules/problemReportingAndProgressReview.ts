@@ -13,7 +13,7 @@ export default {
       component: () => import("@/views/problemReportingAndProgressReview/list/index.vue"),
       meta: {
         title: "问题上报及进度查看",
-        roles: ["normal"]
+        roles: ["admin", "superAdmin", "normal"]
       }
     },
 

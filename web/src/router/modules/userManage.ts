@@ -13,7 +13,7 @@ export default {
       component: () => import("@/views/userManage/list/index.vue"),
       meta: {
         title: "用户管理",
-        roles: ["admin"]
+        roles: ["admin", "superAdmin"]
       }
     }
   ]

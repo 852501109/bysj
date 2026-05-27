@@ -13,7 +13,7 @@ export default {
       component: () => import("@/views/systemHelp/index.vue"),
       meta: {
         title: "系统帮助",
-        roles: ["admin"]
+        roles: ["admin", "superAdmin"]
       }
     }
   ]

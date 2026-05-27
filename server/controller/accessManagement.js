@@ -66,6 +66,12 @@ const updateAccessManagementManage = async (accessManagementManage) => {
   return updateData.affectedRows > 0
 }
 
+const getDetail = async (id) => {
+  const sql = `select * from accessManagementlist where id=?`
+  const rows = await exec(sql, [id])
+  return rows[0]
+}
+
 const delAccessManagementManage = async (id) => {
   const sql = `delete from accessManagementlist where id=?`
   const delData = await exec(sql, [id])
@@ -76,6 +82,7 @@ module.exports = {
   getList,
   newAccessManagementManage,
   updateAccessManagementManage,
+  getDetail,
   delAccessManagementManage,
   getTotal,
   repeatName

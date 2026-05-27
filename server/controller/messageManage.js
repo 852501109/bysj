@@ -87,6 +87,12 @@ const updateMessageManage = async (messageManage) => {
   return updateData.affectedRows > 0
 }
 
+const getDetail = async (id) => {
+  const sql = `select * from messagelist where id=?`
+  const rows = await exec(sql, [id])
+  return rows[0]
+}
+
 const delMessageManage = async (id) => {
   const sql = `delete from messagelist where id=?`
   const delData = await exec(sql, [id])
@@ -97,6 +103,7 @@ module.exports = {
   getList,
   newMessageManage,
   updateMessageManage,
+  getDetail,
   delMessageManage,
   getTotal,
   repeatName

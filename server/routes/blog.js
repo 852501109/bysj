@@ -1,14 +1,8 @@
 const router = require('koa-router')()
-const {
-  getList,
-  getDetail,
-  newBlog,
-  updateBlog,
-  delBlog
-} = require('../controller/blog')
+const { getList, getDetail, newBlog, updateBlog, delBlog } = require('../controller/blog')
 const { SuccessModel, ErrorModel } = require('../model/resModel')
-const loginCheck = require('../middleware/loginCheck')
 const { validateId, validateRequired } = require('../utils/validate')
+const permission = require('../middleware/permission')
 
 router.prefix('/api/blog')
 
@@ -17,16 +11,11 @@ router.get('/list', async function (ctx, next) {
     const keyword = ctx.query.keyword || ''
 
     if (ctx.query.isadmin) {
-        console.log('is admin')
-        // 管理员界面
-        if (ctx.session.username == null) {
-            console.error('is admin, but no login')
-            // 未登录
+        if (!ctx.state.user) {
             ctx.body = new ErrorModel('未登录')
             return
         }
-        // 强制查询自己的博客
-        author = ctx.session.username
+        author = ctx.state.user.username
     }
 
     const listData = await getList(author, keyword)
@@ -40,16 +29,16 @@ router.get('/detail', async function (ctx, next) {
     ctx.body = new SuccessModel(data)
 })
 
-router.post('/new', loginCheck, async function (ctx, next) {
+router.post('/new', permission('blog:create'), async function (ctx, next) {
   const body = ctx.request.body
   const err = validateRequired(body, ['title', 'content'])
   if (err) { ctx.body = new ErrorModel(err); return }
-  body.author = ctx.session.username
+  body.author = ctx.state.user.username
   const data = await newBlog(body)
   ctx.body = new SuccessModel(data)
 })
 
-router.post('/update', loginCheck, async function (ctx, next) {
+router.post('/update', permission('blog:update'), async function (ctx, next) {
     const err = validateId(ctx.query.id) || validateRequired(ctx.request.body, ['title', 'content'])
     if (err) { ctx.body = new ErrorModel(err); return }
     const val = await updateBlog(ctx.query.id, ctx.request.body)
@@ -60,10 +49,10 @@ router.post('/update', loginCheck, async function (ctx, next) {
     }
 })
 
-router.post('/del', loginCheck, async function (ctx, next) {
+router.post('/del', permission('blog:delete'), async function (ctx, next) {
   const err = validateId(ctx.query.id)
   if (err) { ctx.body = new ErrorModel(err); return }
-  const author = ctx.session.username
+  const author = ctx.state.user.username
   const val = await delBlog(ctx.query.id, author)
   if (val) {
       ctx.body = new SuccessModel()
