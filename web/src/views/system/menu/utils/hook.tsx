@@ -1,7 +1,12 @@
 import editForm from "../form.vue";
 import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
-import { getMenuList } from "@/api/system";
+import {
+  getMenuList,
+  createMenu,
+  updateMenu,
+  deleteMenu
+} from "@/api/system";
 import { transformI18n } from "@/plugins/i18n";
 import { addDialog } from "@/components/ReDialog";
 import { reactive, ref, onMounted, h } from "vue";
@@ -167,34 +172,27 @@ export function useMenu() {
       beforeSure: (done, { options }) => {
         const FormRef = formRef.value.getRef();
         const curData = options.props.formInline as FormItemProps;
-        function chores() {
-          message(
-            `您${title}了菜单名称为${transformI18n(curData.title)}的这条数据`,
-            {
-              type: "success"
-            }
-          );
-          done(); // 关闭弹框
-          onSearch(); // 刷新表格数据
-        }
-        FormRef.validate(valid => {
+        FormRef.validate(async valid => {
           if (valid) {
-            console.log("curData", curData);
-            // 表单规则校验通过
             if (title === "新增") {
-              // 实际开发先调用新增接口，再进行下面操作
-              chores();
+              await createMenu(curData);
             } else {
-              // 实际开发先调用修改接口，再进行下面操作
-              chores();
+              await updateMenu({ ...curData, id: row?.id });
             }
+            message(
+              `您${title}了菜单名称为${transformI18n(curData.title)}的这条数据`,
+              { type: "success" }
+            );
+            done();
+            onSearch();
           }
         });
       }
     });
   }
 
-  function handleDelete(row) {
+  async function handleDelete(row) {
+    await deleteMenu(row.id);
     message(`您删除了菜单名称为${transformI18n(row.title)}的这条数据`, {
       type: "success"
     });
